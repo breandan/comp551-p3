@@ -8,8 +8,7 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.python.keras import backend as K
-from tensorflow.python.keras.callbacks import ModelCheckpoint
-from tensorflow.python.keras.callbacks import TensorBoard
+from tensorflow.python.keras.callbacks import ModelCheckpoint, TensorBoard, Callback
 from load_data import load_data
 batch_size = 128
 num_classes = 40
