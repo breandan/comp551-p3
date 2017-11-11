@@ -4,35 +4,29 @@
 from __future__ import print_function
 import tensorflow as tf
 from tensorflow import keras
+from tensorflow.python.keras.datasets import mnist
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Dropout, Flatten
 from tensorflow.python.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.callbacks import ModelCheckpoint, TensorBoard, Callback
-from load_data import load_data
+from clean_data import get_clean_data
+
 batch_size = 128
 num_classes = 40
 epochs = 100
 
 # input image dimensions
-img_rows, img_cols = 64,64
+img_rows, img_cols = 64, 64
 
 # the data, shuffled and split between train and test sets
-(x_train, y_train), (x_test, y_test) = load_data()
-
-if K.image_data_format() == 'channels_first':
-    x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
-    x_test = x_test.reshape(x_test.shape[0], 1, img_rows, img_cols)
-    input_shape = (1, img_rows, img_cols)
-else:
-    x_train = x_train.reshape(x_train.shape[0], img_rows, img_cols, 1)
-    x_test = x_test.reshape(x_test.shape[0], img_rows, img_cols, 1)
-    input_shape = (img_rows, img_cols, 1)
+(x_train, y_train), (x_test, y_test) = get_clean_data()
 
 x_train = x_train.astype('float32')
 x_test = x_test.astype('float32')
 x_train /= 255
 x_test /= 255
+
 print('x_train shape:', x_train.shape)
 print(x_train.shape[0], 'train samples')
 print(x_test.shape[0], 'test samples')
@@ -42,12 +36,12 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 
 # LeNet architecture for MNIST
 model = Sequential()
-model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', input_shape=input_shape))
-model.add(Conv2D(128, (3, 3), activation='relu'))
+model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(64, 64, 1)))
+model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
 model.add(Flatten())
-model.add(Dense(256, activation='relu'))
+model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 

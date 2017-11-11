@@ -1,36 +1,38 @@
-'''Loads training data, presumed to be in ./data
 '''
+Loads training data, presumed to be in ./data
+'''
+
 import numpy as np
+from pathlib import Path
+from collections import defaultdict
 
 def load_data():
-    x = np.genfromtxt('data/train_x.csv', delimiter=",")
-    y = np.genfromtxt('data/train_y.csv', dtype=int)
+    training_data = Path("data/training_data.npz")
+    
+    if training_data.is_file():
+        with np.load("data/training_data.npz") as data:
+            x = data['x']
+            y = data['y']
+    else:
+        x = np.genfromtxt('data/train_x.csv', delimiter=",")
+        y = np.genfromtxt('data/train_y.csv', dtype=int)
+        np.savez("data/training_data.npz", x=x, y=y)
 
-    test_split = 0.2
-    np.random.seed(113)
-    indices = np.arange(len(x))
-    np.random.shuffle(indices)
-    _, num_to_index = get_labels()
-    x = x[indices]
-    y = y[indices]
-    y = [num_to_index[yi] for yi in y.tolist()]
-
-    x_train = np.array(x[:int(len(x) * (1 - test_split))])
-    y_train = np.array(y[:int(len(x) * (1 - test_split))])
-    x_test = np.array(x[int(len(x) * (1 - test_split)):])
-    y_test = np.array(y[int(len(x) * (1 - test_split)):])
-
-    return (x_train, y_train), (x_test, y_test)
+    return x, y
 
 def get_labels():
     numbers = set()
+    solutions = defaultdict(int)
     for i in range(0,10):
         for j in range(0,10):
             numbers.add(i+j)
             numbers.add(i*j)
+            solutions[i+j] += 1
+            solutions[i*j] += 1
+    uniques = {k:v in solutions for (k, v) in solutions.items() if v == 2}
 
     mapping = [-1]*82
     for i, j in enumerate(numbers):
        mapping[j] = i 
 
-    return numbers, mapping
+    return numbers, mapping, uniques
