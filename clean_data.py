@@ -15,7 +15,7 @@ def get_clean_data():
     x = remove_dots(x)
     x = x.reshape(-1, 64, 64, 1)
 
-    test_split = 0.2
+    test_split = 0.1
     np.random.seed(113)
     indices = np.arange(len(x))
     np.random.shuffle(indices)
@@ -32,7 +32,7 @@ def get_clean_data():
 
 def threshold(x):
     # Binarize input data
-    x[x > 220] = 255
+    x[x > 200] = 255
     x[x < 255] = 0
 
     return x

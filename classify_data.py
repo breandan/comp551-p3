@@ -24,5 +24,5 @@ labels, _, _ = get_labels()
 labels = list(labels)
 
 to_show = int(sys.argv[1])
-print(np.argmax(predictions[to_show]))
+print(labels[np.argmax(predictions[to_show])])
 scipy.misc.imshow(scipy.ndimage.zoom(x_test[to_show].reshape(64,64), 16, order=0))

@@ -12,18 +12,19 @@ from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.callbacks import ModelCheckpoint, TensorBoard, Callback
 from clean_data import get_clean_data
 
-batch_size = 128
+batch_size = 32
 num_classes = 40
 epochs = 100
 
 # input image dimensions
 img_rows, img_cols = 64, 64
 
-# the data, shuffled and split between train and test sets
 (x_train, y_train), (x_test, y_test) = get_clean_data()
 
-x_train = x_train.astype('bool_')
-x_test = x_test.astype('bool_')
+x_train = x_train.astype('float16')
+x_test = x_test.astype('float16')
+x_train /= 255
+x_test /= 255
 
 print('x_train shape:', x_train.shape)
 print(x_train.shape[0], 'train samples')
@@ -34,37 +35,34 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 
 # LeNet architecture for MNIST
 model = Sequential()
-model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(64, 64, 1)))
-model.add(Conv2D(128, (3, 3), activation='relu'))
+model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(64, 64, 1)))
+model.add(Conv2D(32, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
+model.add(Conv2D(32, (3, 3), activation='relu'))
+model.add(Conv2D(32, (3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(32, (3, 3), activation='relu'))
+model.add(Conv2D(32, (3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.5))
 model.add(Flatten())
 model.add(Dense(256, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 
 model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.Adadelta(),
+              optimizer=keras.optimizers.SGD(lr=0.005),
               metrics=['accuracy'])
 
 checkpointer = ModelCheckpoint(filepath='data/temp_model.hdf5', verbose=1, save_best_only=True)
 tensorboard = TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=False)
-
-class TestCallback(Callback): 
-    def __init__(self, test_data):
-        self.test_data = test_data
-
-    def on_epoch_end(self, epoch, logs={}):
-        x, y = self.test_data
-        loss, acc = self.model.evaluate(x, y, verbose=0)
-        print('\nTesting loss: {}, acc: {}\n'.format(loss, acc))
 
 model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=epochs,
           verbose=1,
           validation_data=(x_test, y_test),
-          callbacks=[checkpointer, tensorboard, TestCallback((x_test, y_test))])
+          callbacks=[checkpointer, tensorboard])
 
 score = model.evaluate(x_test, y_test, verbose=0)
 print('Final Test loss:', score[0])
