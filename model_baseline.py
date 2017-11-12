@@ -22,10 +22,8 @@ img_rows, img_cols = 64, 64
 # the data, shuffled and split between train and test sets
 (x_train, y_train), (x_test, y_test) = get_clean_data()
 
-x_train = x_train.astype('float32')
-x_test = x_test.astype('float32')
-x_train /= 255
-x_test /= 255
+x_train = x_train.astype('bool_')
+x_test = x_test.astype('bool_')
 
 print('x_train shape:', x_train.shape)
 print(x_train.shape[0], 'train samples')
@@ -36,12 +34,12 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 
 # LeNet architecture for MNIST
 model = Sequential()
-model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(64, 64, 1)))
-model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(64, 64, 1)))
+model.add(Conv2D(128, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
 model.add(Flatten())
-model.add(Dense(128, activation='relu'))
+model.add(Dense(256, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes, activation='softmax'))
 
@@ -49,7 +47,7 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
 
-checkpointer = ModelCheckpoint(filepath='/tmp/weights.hdf5', verbose=1, save_best_only=True)
+checkpointer = ModelCheckpoint(filepath='data/temp_model.hdf5', verbose=1, save_best_only=True)
 tensorboard = TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=False)
 
 class TestCallback(Callback): 
