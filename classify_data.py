@@ -23,7 +23,7 @@ predictions = model.predict(x_test)
 labels, _, _ = get_labels()
 labels = list(labels)
 
-with open('data/y_test.csv', 'w+') as output:
+with open('data/test_y.csv', 'w+') as output:
     print("Id,Label", file=output)
     for i, prediction in enumerate(predictions):
         print(str(i + 1) + "," + str(labels[np.argmax(prediction)]), file=output)
