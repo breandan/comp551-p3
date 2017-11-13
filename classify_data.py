@@ -6,7 +6,7 @@ import numpy as np
 import sys
 
 print("Loading model...")
-model = load_model('data/weights.hdf5')
+model = load_model(sys.argv[1])
 print("Loaded model!")
 
 print("Loading test data...")
