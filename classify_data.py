@@ -6,7 +6,7 @@ import numpy as np
 import sys
 
 print("Loading model...")
-model = load_model('data/temp_model.hdf5')
+model = load_model('data/weights.hdf5')
 print("Loaded model!")
 
 print("Loading test data...")
@@ -18,11 +18,12 @@ x_test = remove_dots(x_test)
 x_test = x_test.reshape(-1, 64, 64, 1)
 
 print("Printing data...")
-predictions = model.predict(x_test[0:100])
+predictions = model.predict(x_test)
 
 labels, _, _ = get_labels()
 labels = list(labels)
 
-to_show = int(sys.argv[1])
-print(labels[np.argmax(predictions[to_show])])
-scipy.misc.imshow(scipy.ndimage.zoom(x_test[to_show].reshape(64,64), 16, order=0))
+with open('data/y_test.csv', 'w+') as output:
+    print("Id,Category", file=output)
+    for i, prediction in enumerate(predictions):
+        print(str(i + 1) + "," + str(labels[np.argmax(prediction)]), file=output)
