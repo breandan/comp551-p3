@@ -1,5 +1,7 @@
 # COMP551 - Modified MNIST Challenge
 
+## Prerequisites
+
 Dependences: 
 
 ```
@@ -9,7 +11,7 @@ opencv-python (pip)
 TensorFlow 1.4+
 ```
 
-To train our CNN, we expect the following files to be present:
+To train the CNN, the following files should be present:
 
 ```
 data/train_x.csv
