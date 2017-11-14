@@ -14,7 +14,7 @@ from clean_data import get_clean_data
 
 batch_size = 32
 num_classes = 40
-epochs = 100
+epochs = 500
 
 # input image dimensions
 img_rows, img_cols = 64, 64
@@ -33,23 +33,33 @@ print(x_test.shape[0], 'test samples')
 y_train = keras.utils.to_categorical(y_train, num_classes)
 y_test = keras.utils.to_categorical(y_test, num_classes)
 
-# LeNet architecture for MNIST
+# Adapted from LeNet MNIST architecture 
 model = Sequential()
+
 model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(64, 64, 1)))
+model.add(BatchNormalization())
 model.add(Conv2D(32, (3, 3), activation='relu'))
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(BatchNormalization())
 model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(BatchNormalization())
 model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(BatchNormalization())
 model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.3))
 model.add(Flatten())
-model.add(Dense(256, activation='relu'))
+model.add(Dense(512, activation='relu'))
 model.add(Dropout(0.3))
-model.add(Dense(256, activation='relu'))
+model.add(BatchNormalization())
+model.add(Dense(512, activation='relu'))
 model.add(Dropout(0.3))
+model.add(BatchNormalization())
 model.add(Dense(num_classes, activation='softmax'))
 
 model.compile(loss=keras.losses.categorical_crossentropy,

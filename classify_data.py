@@ -20,16 +20,30 @@ model = load_model(model_path)
 
 print("Loading test data...")
 x_test = load_testing_data()
+x_test = x_test.reshape(-1, 64, 64)
 
 print("Removing background...")
 x_test = threshold(x_test)
 
 print("Removing dots...")
-x_test = remove_dots(x_test)
+#x_test = remove_dots(x_test)
 
+#new_im = np.zeros((256, 256))
+#r = 0
+#for i in range(0, 256,64):
+#    for j in range(0, 256, 64):
+#        # paste the image at location i,j
+#        new_im[i:i+64, j:j+64] = x_test[r]
+#        r += 1
+#
+#new_im = scipy.ndimage.zoom(new_im, 4, order=0) 
+#scipy.misc.imsave('sample_clean.jpg', new_im)
+
+#scipy.misc.imshow(new_im) # to visualize only 
+#quit()
+
+print("Generating predictions...")
 x_test = x_test.reshape(-1, 64, 64, 1)
-
-print("Printing data...")
 predictions = model.predict(x_test)
 
 labels, _, _ = get_labels()

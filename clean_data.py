@@ -39,8 +39,8 @@ def threshold(x):
 
 # Clean up noise
 def remove_dots(x):
-    x = x.reshape(-1, 64, 64)
-    for i, img in enumerate(x):
+    #x = x.reshape(-1, 64, 64)
+    for j, img in enumerate(x):
         nb_components, output, stats, centroids = cv2.connectedComponentsWithStats(img, connectivity=8)
         sizes = stats[1:, -1]; nb_components = nb_components - 1
 
@@ -51,6 +51,6 @@ def remove_dots(x):
         for i in range(0, nb_components):
             if sizes[i] >= min_size:
                 img2[output == i + 1] = 255
-        x[i] = img2.reshape(64, 64)
+        x[j] = img2.reshape(64, 64)
 
     return x
